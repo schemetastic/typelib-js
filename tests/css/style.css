@@ -1,0 +1,181 @@
+/* Font */
+
+/*The font is remotely imported from Google Fonts, it's files and content are not under typelib-js MIT license*/
+@import url('https://fonts.googleapis.com/css2?family=PT+Mono&display=swap');
+
+/* Defaults */
+:root {
+	font-size: 16px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+}
+
+/* Container */
+.container {
+	font-family: 'PT Mono', monospace;
+	width: 90%;
+	padding: 1.5rem 2rem;
+	max-width: 1100px;
+	margin: 0 auto;
+	overflow: auto;
+}
+
+/* Message when Browser or runtime is not compatible */
+.environmentNotCompatible {
+	padding: 2rem;
+	border: 2px solid #ff7777;
+	border-radius: 5px;
+}
+
+.environmentNotCompatible[aria-hidden="true"] {
+	display: none;
+}
+
+.environmentNotCompatible[aria-hidden="false"] {
+	display: block;
+}
+
+/* Index */
+.index li {
+	padding: 0.25rem 0;
+}
+
+/* Categories List */
+.categoriesList {
+	list-style: none;
+}
+
+.categoriesList li {
+	margin: 0 0.5rem;
+	padding: 0.5rem 1rem;
+	position: relative;
+}
+
+/* Categories marks*/
+.category-mark {
+	display: block;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 0.52rem;
+	height: 100%;
+}
+
+.category-primitive {
+	background-color: springgreen;
+}
+
+.category-common-object {
+	background-color: royalblue;
+}
+
+.category-numeric {
+	background-color: darkblue;
+}
+
+.category-function {
+	background-color: orange;
+}
+
+.category-constructor-object {
+	background-color: tomato;
+}
+
+.category-error {
+	background-color: crimson;
+}
+
+.category-miscellaneous {
+	background-color: deeppink;
+}
+
+.category-browser,
+.category-node-js {
+	background-color: blueviolet;
+}
+
+/* Tables */
+table {
+	text-align: center;
+	width: 100%;
+	min-width: 750px;
+	margin-bottom: 3.5rem;
+	background-color: #cccccc;
+}
+
+table caption {
+	font-size: 1.2rem;
+	font-weight: bold;
+	padding: 1.25rem 1rem;
+}
+
+table thead {
+	font-weight: 700;
+}
+
+table thead th {
+	background-color: lavender;
+}
+
+table td {
+	position: relative;
+	padding: 0.25rem;
+	background-color: #ffffff;
+}
+
+table th {
+	position: relative;
+	padding: 0.7rem 0.57rem;
+	background-color: mintcream;
+}
+
+
+/*Test icon*/
+.testIcon {
+	display: inline-block;
+	font-size: 0.75rem;
+	color: white;
+	bottom: 0;
+	right: 0;
+	position: absolute;
+	width: 0.8rem;
+	height: 0.8rem;
+	text-align: center;
+}
+
+.testIcon-preview {
+	position: relative;
+	width: 1.2rem;
+	height: 1.2rem;
+	padding-bottom: 0;
+}
+
+/*Utils*/
+.align-left {
+	text-align: left;
+}
+
+/*Responsiveness*/
+@media (max-width: 1024px) {
+	:root {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 720px) {
+	:root {
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 480px) {
+	:root {
+		font-size: 11px;
+	}
+}
