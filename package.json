@@ -1,0 +1,36 @@
+{
+  "name": "typelib-js",
+  "version": "0.7.0",
+  "description": "A library that helps you to verify different types and kinds of data.",
+  "main": "./dist/typelib.cjs.min.js",
+  "module": "./dist/typelib.es.min.js",
+  "scripts": {
+    "build": "npx rollup -c",
+    "watch": "npx rollup -c --watch",
+    "node-js-tests": "node 'tests/js/generate-node-js-tables.js'"
+  },
+  "keywords": [
+    "typelib",
+    "schemetastic",
+    "data-verification",
+    "type-of-data",
+    "verification",
+    "validation",
+    "typeof",
+    "types",
+    "kinds"
+  ],
+  "author": {
+    "name": "Rodrigo Calix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schemetastic/typelib-js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^2.77.2",
+    "rollup-plugin-banner": "^0.2.1",
+    "rollup-plugin-esbuild": "^4.9.1"
+  }
+}

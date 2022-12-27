@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TypeLib JS | Browser tests</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+	<div class="container">
+		<h1>TypeLib JS (type()) | Browser tests</h1>
+
+		<!--Message of browser not compatible-->
+		<div class="environmentNotCompatible" aria-hidden="true">
+			<h2>Sorry but it seems like your browser is outdated and doesn't support the necessary features to perform
+				the tests.</h2>
+			<p>
+				Go to: <i>"js/features-detection.js"</i> to see a list of the required features. If you
+				want to test older browsers, remove the incompatible features of this file and also from the tests
+				in <i>"js/tests-lib/"</i>.
+			</p>
+		</div>
+
+		<!--Main content-->
+		<div class="mainContent">
+
+			<!--Index-->
+			<h2>Index</h2>
+			<ol class="index">
+				<li><a href="#test-result-graphic-marks">Tests result graphic marks</a></li>
+				<li><a href="#properties-tests">Properties tests</a></li>
+				<ol>
+					<li><a href="#categories">Categories</a></li>
+					<li><a href="#global-tests">Global tests</a></li>
+					<li><a href="#browser-tests">Browser tests</a></li>
+				</ol>
+				<li><a href="#methods-tests">Methods tests</a></li>
+				<ol>
+					<li><a href="#is-it-method">.isIt()</a></li>
+					<li><a href="#is-not-method">.isNot()</a></li>
+				</ol>
+				<li><a href="#parameters-tests">Parameters tests</a></li>
+				<ol>
+					<li><a href="#parameters-validation">Parameters Validation</a></li>
+					<li><a href="#writable-parameter">Writable Parameter</a></li>
+				</ol>
+			</ol>
+
+			<!--Tests result graphic marks-->
+			<h2 id="test-result-graphic-marks">Test result graphic marks</h2>
+			<p>
+				<img src="img/check-mark.svg" class="testIcon testIcon-preview" alt="Check mark">
+				= The result is the expected <br>
+
+				<img src="img/x-mark.svg" class="testIcon testIcon-preview" alt="X mark">
+				= The result is unexpected <br>
+			</p>
+
+			<!--Properties-->
+			<h2 id="properties-tests">Properties tests</h2>
+
+			<!--Properties: Categories list-->
+			<h3 id="categories">Categories</h3>
+			<ul class="categoriesList">
+				<li>
+					<span class="category-mark category-primitive"></span>
+					Primitives
+				</li>
+				<li><span class="category-mark category-common-object"></span>
+					Common Objects
+				</li>
+				<li>
+					<span class="category-mark category-numeric"></span>
+					Numeric
+				</li>
+				<li>
+					<span class="category-mark category-function"></span>
+					Function Types
+				</li>
+				<li>
+					<span class="category-mark category-constructor-object"></span>
+					Constructor Objects
+				</li>
+				<li>
+					<span class="category-mark category-error"></span>
+					Errors
+				</li>
+				<li>
+					<span class="category-mark category-miscellaneous"></span>
+					Miscellaneous
+				</li>
+				<li>
+					<span class="category-mark category-browser"></span>
+					Browser
+				</li>
+			</ul>
+
+			<!--Properties: Global tests-->
+			<div id="global-tests"></div>
+
+			<!--Properties: Browser tests-->
+			<div id="browser-tests"></div>
+
+			<!--Methods-->
+			<h2 id="methods-tests">Methods tests</h2>
+
+			<!--Methods: isIt()-->
+			<div id="is-it-method"></div>
+
+			<!--Methods: isNot()-->
+			<div id="is-not-method"></div>
+
+			<!--Parameters-->
+			<h2 id="parameters-tests">Parameters tests</h2>
+
+			<!--Parameters: Validation-->
+			<div id="parameters-validation"></div>
+
+			<!--Parameters: Writable-->
+			<div id="writable-parameter"></div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../dist/typelib.min.js"></script>
+	<script type="text/javascript" src="js/features-detection.js"></script>
+	<script type="text/javascript" src="js/tests-lib/global-tests.js"></script>
+	<script type="text/javascript" src="js/tests-lib/browser-tests.js"></script>
+	<script type="text/javascript" src="js/tests-lib/methods-tests.js"></script>
+	<script type="text/javascript" src="js/tests-lib/params-tests.js"></script>
+	<script type="text/javascript" src="js/table-generator.js"></script>
+	<script type="text/javascript">
+		// Check if browser is compatible
+		if (!isEnvironmentCompatible()) {
+			// If not display a message on the browser
+			document.querySelector('.environmentNotCompatible').setAttribute('aria-hidden', 'false');
+			// Don't show the other content
+			document.querySelector('.mainContent').style.display = "none";
+			// Throw error for debugging and also to stop the script
+			throw Error("Your browser doesn't support all the necessary features to perform the tests.");
+		}
+
+		// Elements selection
+		// Properties elements containers
+		let globalTestsContainer = document.getElementById('global-tests');
+		let browserTestsContainer = document.getElementById('browser-tests');
+		// Methods elements containers
+		let isItMethodContainer = document.getElementById('is-it-method');
+		let isNotMethodContainer = document.getElementById('is-not-method');
+		// Parameters elements containers
+		let paramsValidationContainer = document.getElementById('parameters-validation');
+		let writableParamContainer = document.getElementById('writable-parameter');
+
+		// Tables generation
+		// Inject Properties tests tables
+		globalTestsContainer.innerHTML = generateTable.properties('Global tests', globalTests);
+		browserTestsContainer.innerHTML = generateTable.properties('Browser tests', browserTests);
+		// Inject Methods tests tables
+		isItMethodContainer.innerHTML = generateTable.methodsAndParams('isIt()', methodsTests["is-it"]);
+		isNotMethodContainer.innerHTML = generateTable.methodsAndParams('isNot()', methodsTests["is-not"]);
+		// Inject Parameters tests tables
+		paramsValidationContainer.innerHTML = generateTable.methodsAndParams('Parameters Validation', paramsTests["params-validation"]);
+		writableParamContainer.innerHTML = generateTable.methodsAndParams('Writable Parameter', paramsTests["writable"]);
+	</script>
+</body>
+
+</html>
