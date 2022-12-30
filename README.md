@@ -29,6 +29,10 @@ This is a JavaScript library that can help you to verify types of data. Usually,
 - [License](#license)
 
 ## Installation
+You can install it with NPM like this:
+```shell
+npm i typelib-js
+```
 
 You can request it with `import`, `require`, or `<script>` from the _node_modules_ folder or the _dist_ folder if necessary.
 
