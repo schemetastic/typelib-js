@@ -1,5 +1,5 @@
 /*
-** typelib-js | Version 0.7.0
+** typelib-js | Version 0.7.1
 ** A library that helps you to verify different types and kinds of data.
 ** © Rodrigo Calix | License: MIT
 */
@@ -26,7 +26,7 @@ const type = function type(data, customParams) {
 				if (params === undefined) return false;
 
 				// Check if the parameters are a plain object.
-				if (Object.prototype.toString.call(params) != '[object Object]') throw TypeError('The `params` argument must be and object.');
+				if (Object.prototype.toString.call(params) != '[object Object]') throw TypeError('The `params` argument must be an object.');
 
 				// Check if the `writable` parameter was defined but also a boolean.
 				if (params.writable !== undefined && (params.writable !== true && params.writable !== false)) throw TypeError('The parameter `writable` must be a boolean.');
