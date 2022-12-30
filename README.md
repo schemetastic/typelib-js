@@ -192,7 +192,7 @@ Some falsy values are:
 - NaN value
 - null and undefined
 
-And others. Check: And many more, check: [Falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+And others. Check: [Falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
 
 ### `.isNullish`
 Type|Writable|Description
