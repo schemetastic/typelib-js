@@ -1,5 +1,5 @@
 /*
-** typelib-js | Version 0.7.1
+** typelib-js | Version 0.7.3
 ** A library that helps you to verify different types and kinds of data.
 ** © Rodrigo Calix | License: MIT
 */
