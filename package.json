@@ -1,6 +1,6 @@
 {
   "name": "typelib-js",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "A library that helps you to verify different types and kinds of data.",
   "main": "./dist/typelib.cjs.min.js",
   "module": "./dist/typelib.es.min.js",
