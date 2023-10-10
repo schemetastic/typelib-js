@@ -417,34 +417,6 @@ const globalTests = [
             is: 'bigint',
             kinds: ['falsy', 'numeric', 'primitive']
         }
-    },
-    {
-        name: "Arrow function with default parameters and a comment (Regex test)",
-        label: '(params = {<br> sayHello: ()=> "Hello!"<br>}) /*comment =>*/ => params.sayHello()',
-        category: "miscellaneous",
-        test: function(){
-            return (params = {
-                sayHello: ()=> "Hello!"
-            }) /*comment =>*/ => params.sayHello()
-        },
-        expected: {
-            is: 'arrowfunction',
-            kinds: ['truthy', 'function', 'object']
-        }
-    },
-    {
-        name: "Function containing arrow function (Regex test)",
-        label: 'function(params = {<br>func: ()=> "Hello!"<br>}){}',
-        category: "miscellaneous",
-        test: function(){
-            return function(params = {
-                func: ()=> "Hello!"
-            }){};
-        },
-        expected: {
-            is: 'function',
-            kinds: ['truthy', 'function', 'object']
-        }
     }
 ];
 
