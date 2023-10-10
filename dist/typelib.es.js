@@ -1,5 +1,5 @@
 /*
-** typelib-js | Version 0.7.3
+** typelib-js | Version 0.8.0
 ** A library that helps you to verify different types and kinds of data.
 ** © Rodrigo Calix | License: MIT
 */
@@ -75,8 +75,8 @@ const type = function type(data, customParams) {
 				if (defaultType == "function" && data.toString().indexOf('class') === 0) return "class";
 				
 				// If it's an arrow function.
-				// Regex explanation: starts-with([any-character])[any-character]=>, arrow functions can have comments or default parameters.
-				if (defaultType == "function" && data.toString().match(/^\([\s\S]*\)[\s\S]*=>/gm)) return "arrowfunction";
+				// AI help: https://www.perplexity.ai/search/How-can-you-icR0PHxbRZmITiFRmKjjuQ?s=c
+				if (defaultType == "function" && !data.prototype && data.toString().indexOf('function') === -1) return "arrowfunction";
 
 				// If it's NaN, Infinity or -Infinity.
 				var numberTypes = ["NaN", 'Infinity', '-Infinity'];
