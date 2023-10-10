@@ -71,7 +71,7 @@ const type = function type(data, customParams) {
 				
 				// If it's an arrow function.
 				// AI help: https://www.perplexity.ai/search/How-can-you-icR0PHxbRZmITiFRmKjjuQ?s=c
-				if (defaultType == "function" && !data.prototype && data.toString().indexOf('function') === -1) return "arrowfunction";
+				if (defaultType == "function" && !data.prototype && data.toString().indexOf('function') !== 0) return "arrowfunction";
 
 				// If it's NaN, Infinity or -Infinity.
 				var numberTypes = ["NaN", 'Infinity', '-Infinity'];
