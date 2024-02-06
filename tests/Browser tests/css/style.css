@@ -41,65 +41,6 @@ body {
 	display: block;
 }
 
-/* Index */
-.index li {
-	padding: 0.25rem 0;
-}
-
-/* Categories List */
-.categoriesList {
-	list-style: none;
-}
-
-.categoriesList li {
-	margin: 0 0.5rem;
-	padding: 0.5rem 1rem;
-	position: relative;
-}
-
-/* Categories marks*/
-.category-mark {
-	display: block;
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 0.52rem;
-	height: 100%;
-}
-
-.category-primitive {
-	background-color: springgreen;
-}
-
-.category-common-object {
-	background-color: royalblue;
-}
-
-.category-numeric {
-	background-color: darkblue;
-}
-
-.category-function {
-	background-color: orange;
-}
-
-.category-constructor-object {
-	background-color: tomato;
-}
-
-.category-error {
-	background-color: crimson;
-}
-
-.category-miscellaneous {
-	background-color: deeppink;
-}
-
-.category-browser,
-.category-node-js {
-	background-color: blueviolet;
-}
-
 /* Tables */
 table {
 	text-align: center;

@@ -1,13 +1,15 @@
 {
   "name": "typelib-js",
-  "version": "0.8.1",
+  "version": "0.10.0",
   "description": "A library that helps you to verify different types and kinds of data.",
-  "main": "./dist/typelib.cjs.min.js",
-  "module": "./dist/typelib.es.min.js",
+  "main": "./dist/typelib.cjs",
+  "module": "./dist/typelib.mjs",
+  "type": "module", 
   "scripts": {
     "build": "npx rollup -c",
     "watch": "npx rollup -c --watch",
-    "node-js-tests": "node 'tests/js/generate-node-js-tables.js'"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test-watch": "node --experimental-vm-modules node_modules/.bin/jest --watch"
   },
   "keywords": [
     "typelib",
@@ -29,6 +31,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "jest": "^29.7.0",
     "rollup": "^2.77.2",
     "rollup-plugin-banner": "^0.2.1",
     "rollup-plugin-esbuild": "^4.9.1"

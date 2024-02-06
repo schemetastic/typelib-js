@@ -1,10 +1,12 @@
 # TypeLib JS
 
-This is a JavaScript library that can help you to verify types of data. Usually, to do this it is used the `typeof` operator, but doesn't specifically recognize every type of data, and might return unexpected results, so this leads to use methods such as `Array.isArray()`, `isNaN()`, or others, this library tries to address this problem by just using one function that returns a set of properties and methods to make data type verification easy.
+This is a JavaScript library that can help you to verify types of data. Usually, to do this it is used the `typeof` operator, but it doesn't specifically recognize every type of data, and might return unexpected results, so this leads to use methods such as `Array.isArray()`, `isNaN()`, or others, this library tries to address this problem by just using one function that returns a set of properties and methods to make data type verification easy.
 
 ## Contents
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+  - [The type function (quick-start)](#the-type-function-quick-start)
+  - [The typeErrorIf function (quick-start)](#the-typeerrorif-function-quick-start)
 - [The type function](#the-typedata-params-function)
   - [data](#data-argument)
   - [parameters](#customparams-argument)
@@ -21,22 +23,44 @@ This is a JavaScript library that can help you to verify types of data. Usually,
   - [isError](#iserror)
   - [isPrimitive](#isprimitive)
   - [isObject](#isobject)
-- [Methods](#methods)
-  - [isIt()](#isitexpectedtype)
-  - [isNot()](#isnotnotexpectedtype) 
+- [type function Methods](#type-methods)
+- [The typeErrorIf function](#the-typeerrorifdata-function)
+  - [Primary Methods](#typeerrorif-primary-methods)
+  - [Secondary Methods](#typeerrorif-secondary-methods)
 - [Table of types tests](#table-of-types-tests)
+- [Testing](#testing)
 - [Credits](#references-credits-and-important-links)
 - [License](#license)
+- [Support](#support)
 
 ## Installation
-You can install it with NPM like this:
+You can install it with NPM:
 ```shell
 npm i typelib-js
 ```
 
-You can request it with `import`, `require`, or `<script>` from the _node_modules_ folder or the _dist_ folder if necessary.
+If you use ES modules:
+```js
+import {type, typeErrorIf} from "typelib-js";
+```
+
+If you use Common JS:
+```js
+const {type, typeErrorIf} = require("typelib-js");
+```
+
+Alternatively you can include it in the browser:
+
+```html
+<script src="dist/typelib.min.js"></script>
+```
 
 ## Quick Start
+
+TypeLib is composed by 2 main functions, `type` and `typeErrorIf`. In short, the `type` function helps you to detect types of data; `typeErrorIf` helps you to debug, with it you can generate `TypeError` objects and throw them or catch them.
+
+### The `type` function (quick start)
+
 With TypeLib JS you can verify specific **types** of data, but also **kinds** of data. For example:
 
 A value such as `['mango', 'pineapple']` ***is an array type***, but in JS an array type can also be considered a ***kind of object***, and a ***kind of truthy*** value.
@@ -98,6 +122,58 @@ function myUtil(func, params){
 ```
 
 To get a deeper understanding of how does the properties and methods work read the next sections cause there are a few things to consider, but at the least is advisable to check the [Table of types tests](#table-of-types-tests) section.
+
+### The `typeErrorIf` function (quick start)
+A very common method to debug types in JS is throwing errors when certain data doesn't meet an specific type, for that, generally you would do something like this:
+
+```js
+function convertData(file){
+  if (typeof file != "string" || !Array.isArray(file)) throw TypeError("The argument `file` is expected to be a string or an array");
+}
+```
+
+The `typeErrorIf` function allows you to semantically throw and catch these errors by verifying a single or multiple types of data, and at the same time do the conditional logic. For example, the code above could be translated to:
+
+```js
+function convertData(file){
+  typeErrorIf(file).isNot(["string","array"]).throwIt();
+}
+
+convertData(Math.PI);
+// throws: TypeError: Unexpected type: number; The only allowed types are: string,array
+```
+To cath an error, instead you would use the `cathIt()` method, like this:
+
+```js
+function message(str){
+  let err = typeErrorIf(str).isNot("string").catchIt();
+  // returns `null` when it does not catch an error.
+  if(err) return "Please enter a valid message";
+}
+```
+
+You can also change the error message and add a cause to the error (recommended) to provide higher guidance to others:
+
+```js
+function setTheme(theme){
+  typeErrorIf(theme).isNot("object").throwIt({
+    message: "The `theme` argument must be an object including the values `h`, `s`, `l`, `a`",
+    cause: setTheme
+  })
+}
+
+setTheme("hsla(12deg 100% 70% / 100%)");
+/*Throws:
+TypeError: The `theme` argument must be an object including the values `h`, `s`, `l`, `a`
+[...]
+cause: [Function: setTheme]
+*/
+```
+
+---
+
+If you want a deeper understanding of TypeLib you can check the rest of the documentation.
+
 
 ## The type(_data_, _params_) function
 Returns|Description
@@ -269,36 +345,93 @@ Everything else that is not a primitive value is considered an object, it includ
 
 Check: [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
-## Methods
-### `.isIt(expectedType)`
+## `type` Methods
+### `.isIt(verifyType)`
 
 Writable|returns|Description
 :-:|:-:|:-:
 no|boolean|Helps to check expected types of data
 
-#### `expectedType` argument
-mandatory|Allowed Types|Description
-:-:|:-:|:-:
-yes|String, Array |the type or types you are expecting
-
-
-
-### `.isNot(notExpectedType)`
+### `.isNot(verifyType)`
 Writable|returns|Description
 :-:|:-:|:-:
 no|boolean|Helps to check not expected types of data
 
-#### `notExpectedType` argument
+### `.isIt` and `.isNot`, `verifyType` argument
 mandatory|Allowed Types|Description
 :-:|:-:|:-:
-yes|String, Array |the type or types you are not expecting
+yes|String, Array |the type or types you want to verify
+
+
+## The typeErrorIf(_data_) function
+Returns|Description
+:-:|:-:
+Object|Helps you to debug type errors
+
+With it you can generate `TypeError` objects and throw them or catch them.
+
+### The `data` argument
+Mandatory|Allowed Types| Description
+:-:|:-:|:-:
+no|Any| The data to be verified
+
+The data passed in this argument will be used to generate an object with the methods to debug type errors.
+
+## `typeErrorIf` Primary Methods
+
+### `.isIt(verifyType)`
+returns|Description
+:-:|:-:
+object|Helps to check expected types of data and returns additional methods
+
+### `.isNot(verifyType)`
+returns|Description
+:-:|:-:
+object|Helps to check not expected types of data and returns additional methods
+
+### `.isIt` and `.isNot`, `verifyType` argument
+mandatory|Allowed Types|Description
+:-:|:-:|:-:
+yes|String, Array |the type or types you want to verify
+
+## `typeErrorIf` Secondary Methods
+After you verify the data with the methods `isIt()` or `isNot()`, you have available these methods:
+
+### `.throwIt(params)`
+returns|Description
+:-:|:-:
+throws an exception or returns null|When the verification results in an error it throws a `TypeError` object, otherwise returns a `null` value.
+
+### `.catchIt(params)`
+returns|Description
+:-:|:-:
+object or null|When the verification results in an error it returns a `TypeError` object, otherwise returns a `null` value.
+
+### `throwIt` and `catchIt`, `params` argument
+Mandatory|Allowed Types| Description
+:-:|:-:|:-:
+no|Plain object| It can help you to add specific properties to the `TypeError object`.
+
+Available parameters:
+- `message`
+- `cause`
+
+#### `message` parameter 
+Allowed Types|default|Description
+:-:|:-:|:-:
+string or function that returns a string|Custom message based on the data passed throught the functions|It allows you to add a custom message to the `TypeError` object.
+
+#### `cause` parameter 
+Allowed Types|default|Description
+:-:|:-:|:-:
+Any|_undefined_|It allows you to add a cause to the `TypeError` object, is recommended to provide more guidance.
 
 
 ## Table of types tests
 
 This table shows some data types and the results you can expect by using the `.is` property and is compared with the native `typeof` operator.
 
-Test| native `typeof` | `.is`
+Test| native `typeof` | TypeLib `.is`
 :-:|:-:|:-:
 "Hello Dev!"|string|string
 new String("Hello")|object|stringobject
@@ -309,14 +442,17 @@ new Number(123)|object|numberobject
 0/0|number|nan
 100/0|number|infinity
 -100/0|number|-infinity
-()=>"Hello"|function|arrowfunction
+()=>"Hello"|function|function
 function(){}|function|function
 new TypeError()|object|typeerror
 new Error()|object|error
 
-If you want to see a more extensive list of types of data you can check the _📁tests_ folder and open the file _📄browser.html_ or _📄node-js.html_.
+## Testing
+Tests are done with Jest, to perform the tests you need to install the dev-dependencies and run the command:
 
-![Screenshot of a table with different types tests](doc-assets/tests-table.png)
+```shell
+npm run test
+```
 
 
 ## References, Credits and important links
@@ -330,3 +466,9 @@ Some references and important mentions can be found along this document in relev
 ## License
 
 The source code and documentation files are licensed under the [MIT license](LICENSE) by Rodrigo Calix.
+
+## Support
+
+You can support this project With Ko-fi!
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/N4N3T6170)

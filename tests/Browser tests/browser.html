@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TypeLib JS | Browser tests</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+	<div class="container">
+		<h1>TypeLib JS (type()) | Browser tests</h1>
+
+		<!--Message of browser not compatible-->
+		<div class="environmentNotCompatible" aria-hidden="true">
+			<h2>Sorry but it seems like your browser is outdated and doesn't support the necessary features to perform
+				the tests.</h2>
+			<p>
+				Go to: <i>"js/features-detection.js"</i> to see a list of the required features. If you
+				want to test older browsers, remove the incompatible features of this file and also from the tests
+				in <i>"js/tests-lib/"</i>.
+			</p>
+		</div>
+
+		<!--Main content-->
+		<div class="mainContent">
+
+			<!--Tests result graphic marks-->
+			<h2 id="test-result-graphic-marks">Test result graphic marks</h2>
+			<p>
+				<img src="img/check-mark.svg" class="testIcon testIcon-preview" alt="Check mark">
+				= The result is the expected <br>
+
+				<img src="img/x-mark.svg" class="testIcon testIcon-preview" alt="X mark">
+				= The result is unexpected <br>
+			</p>
+
+			<!--Properties: Browser tests-->
+			<div id="browser-tests"></div>
+
+		</div>
+	</div>
+	<script type="text/javascript" src="../../dist/typelib.min.js"></script>
+	<script type="text/javascript" src="js/features-detection.js"></script>
+	<script type="text/javascript" src="js/tests-lib/browser-tests.js"></script>
+	<script type="text/javascript" src="js/table-generator.js"></script>
+	<script type="text/javascript">
+		// Check if browser is compatible
+		if (!isEnvironmentCompatible()) {
+			// If not display a message on the browser
+			document.querySelector('.environmentNotCompatible').setAttribute('aria-hidden', 'false');
+			// Don't show the other content
+			document.querySelector('.mainContent').style.display = "none";
+			// Throw error for debugging and also to stop the script
+			throw Error("Your browser doesn't support all the necessary features to perform the tests.");
+		}
+
+		// Elements selection
+		let browserTestsContainer = document.getElementById('browser-tests');
+		let paramsValidationContainer = document.getElementById('parameters-validation');
+		let writableParamContainer = document.getElementById('writable-parameter');
+
+		// Tables generation
+		// Inject Properties tests tables
+		browserTestsContainer.innerHTML = generateTable.properties('Browser tests', browserTests);
+		
+	</script>
+</body>
+
+</html>

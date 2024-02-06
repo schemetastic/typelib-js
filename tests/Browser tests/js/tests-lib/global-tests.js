@@ -221,7 +221,7 @@ const globalTests = [
         category: "function",
         test: function(){return ()=>'Hello!'},
         expected: {
-            is: 'arrowfunction',
+            is: 'function',
             kinds: ['truthy', 'function', 'object']
         }
     },

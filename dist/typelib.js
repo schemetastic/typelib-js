@@ -1,9 +1,9 @@
 /*
-** typelib-js | Version 0.8.1
+** typelib-js | Version 0.10.0
 ** A library that helps you to verify different types and kinds of data.
 ** © Rodrigo Calix | License: MIT
 */
-var type = (function () {
+var typelib = (function (exports) {
 	'use strict';
 
 	/**
@@ -12,7 +12,7 @@ var type = (function () {
 	 * @param {Object} customParams parameters to change the default behavior
 	 * @returns {Object} An instance of the constructor `Type`
 	 */
-	const type = function type(data, customParams) {
+	const type = function (data, customParams) {
 		// The constructor
 		var Type = function (data, customParams) {
 
@@ -27,10 +27,13 @@ var type = (function () {
 					if (params === undefined) return false;
 
 					// Check if the parameters are a plain object.
-					if (Object.prototype.toString.call(params) != '[object Object]') throw TypeError('The `params` argument must be an object.');
+					if (Object.prototype.toString.call(params) != '[object Object]') throw TypeError('The `params` argument must be a plain object');
 
 					// Check if the `writable` parameter was defined but also a boolean.
-					if (params.writable !== undefined && (params.writable !== true && params.writable !== false)) throw TypeError('The parameter `writable` must be a boolean.');
+					if (params.writable !== undefined && (params.writable !== true && params.writable !== false)) throw TypeError('The parameter `writable` must be a boolean');
+					
+					// Check if the `throwError` parameter was defined but also a boolean.
+					if (params.throwError !== undefined && (params.throwError !== true && params.throwError !== false)) throw TypeError('The parameter `throwError` must be a boolean');
 
 					return true;
 				}
@@ -45,13 +48,17 @@ var type = (function () {
 				function getParams() {
 					// default parameters with limited options
 					var defaultParams = Object.seal({
-						writable: false
+						writable: false,
+						throwError: false
 					});
 
 					// If the custom parameters are not available return the default parameters, otherwise assign them to `defaultParams`. 
 					return !areCustomParamsAvailable ? defaultParams : Object.assign(defaultParams, customParams);
 				}
 			)();
+
+			// Store the parameters
+			this.params = !params.writable ? Object.freeze(params) : params;
 
 			// This method returns a more specific type than the native `typeof` operator.
 			// src: https://vanillajstoolkit.com/helpers/truetypeof/
@@ -77,10 +84,6 @@ var type = (function () {
 					// If it's a class.
 					if (defaultType == "function" && data.toString().indexOf('class') === 0) return "class";
 					
-					// If it's an arrow function.
-					// AI help: https://www.perplexity.ai/search/How-can-you-icR0PHxbRZmITiFRmKjjuQ?s=c
-					if (defaultType == "function" && !data.prototype && data.toString().indexOf('function') !== 0) return "arrowfunction";
-
 					// If it's NaN, Infinity or -Infinity.
 					var numberTypes = ["NaN", 'Infinity', '-Infinity'];
 					if (defaultType == "number" && numberTypes.indexOf(data.toString()) > -1) return data.toString().toLowerCase();
@@ -161,39 +164,215 @@ var type = (function () {
 		};
 
 		/**
-		 * Allows you to verify expected types of data
-		 * @param {String | String[]} expectedType the type or types you are expecting 
+		 * Allows you to verify types of data
+		 * @param {String | String[]} verifyType the type or types to be verified
 		 * @returns {Boolean}
 		 */
-		Type.prototype.isIt = function (expectedType) {
-			// If `expectedType` is not a string or an array throw a TypeError. 
-			if (typeof expectedType !== 'string' && !Array.isArray(expectedType)) throw TypeError('isIt(expectedType) method, the `expectedType` argument should be a string or an array.')
+		Type.prototype.isIt = function (verifyType) {
+			// If `verifyType` is not a string or an array throw a TypeError. 
+			if (typeof verifyType !== 'string' && !Array.isArray(verifyType)) throw TypeError('isIt(verifyType) method, the `verifyType` argument should be a string or an array')
 
-			// If `expectedType` is an array check if there is a matching item
-			if (Array.isArray(expectedType)) return expectedType.indexOf(this.is) > -1
+			// If `verifyType` is an array check if there is a matching item
+			if (Array.isArray(verifyType)) return verifyType.indexOf(this.is) > -1
 
-			// If `expectedType` is a string
-			return expectedType === this.is;
+			// If `verifyType` is a string
+			return verifyType === this.is;
 		};
 
 
 		/**
-		 * Allows you to verify not expected types of data
-		 * @param {String | String[]} notExpectedType the type or types you are not expecting 
+		 * Allows you to verify types of data
+		 * @param {String | String[]} verifyType the type or types to be verified
 		 * @returns {Boolean}
 		 */
-		Type.prototype.isNot = function (notExpectedType) {
-			// If `notExpectedType` is not a string or an array throw a TypeError.
-			if (typeof notExpectedType !== 'string' && !Array.isArray(notExpectedType)) throw TypeError('isNot(notExpectedType) method, the `notExpectedType` argument should be a string or an array.');
+		Type.prototype.isNot = function (verifyType) {
+			// If `verifyType` is not a string or an array throw a TypeError.
+			if (typeof verifyType !== 'string' && !Array.isArray(verifyType)) throw TypeError('isNot(verifyType) method, the `verifyType` argument should be a string or an array');
 
 			// Return the opposite of the `isIt()` method
-			return !this.isIt(notExpectedType);
+			return !this.isIt(verifyType);
+			
 		};
 
 		// Create an instance to the `Type` constructor
 		return new Type(data, customParams);
 	};
 
-	return type;
+	/**
+	 * Allows to handle exceptions based on the data passed through the `typeErrorIf` function and its methods
+	 * @param {Object} params based on the data obtained through the `typeErrorIf` function and its methods
+	 */
+	const ExceptionHandler = function(params){
+		// Validate all the parameters
+		if(type(params).isNot("object")) throw TypeError("The `params` argument must be a plain object");
 
-})();
+		if(type(params.isError).isNot("boolean")) throw TypeError("In `params.isError` is expected to be a boolean.");
+		
+		if(type(params.isType).isNot("string")) throw TypeError("In `params.isType` is expected to be a string.");
+
+		if(type(params.verifyType).isNot(["string", "array"])) throw TypeError("In `params.verifyType` is expected to be a string or an array.");
+
+		if(type(params.defaultErrorMessage).isNot(["function", "string"])) throw TypeError("in `params.defaultErrorMessage` is expected to be a function");
+
+		// Assign the specified parameters to `this` 
+		(function assignParamsToThis(inst){
+			["isError", "isType", "verifyType", "defaultErrorMessage"].forEach(function(key){
+				inst[key] = params[key];
+			});
+		})(this);
+
+	};
+	/**
+	 * Throws a TypeError object if the data type is not allowed, otherwise returns `null`
+	 * @param {Object} params allows to add a custom `message` and `cause` to an error
+	 * @returns {Null}
+	 */
+	ExceptionHandler.prototype.throwIt = function(params){
+		// if the data type doesn't cause an exception return `null`
+		if(!this.isError) return null;
+
+		// Validate parameters of the `throwIt()` method
+		if(params) validateThrowAndCatchParams(params, this);
+		
+		// (#) Read note at the bottom of file
+		// Define the error message based on user input, if none, use the default message
+		let errorMessage = params && type(params.message).isIt(["function", "string"]) ? params.message : this.defaultErrorMessage;
+		
+		// Create the TypeError object
+		let typeError = new TypeError(type(errorMessage).isIt("function") ? errorMessage(this.isType, this.verifyType) : errorMessage);
+
+		// Set a cause if defined
+		if(params && params.cause) typeError.cause = params.cause;
+
+		throw typeError;
+	};
+
+	/**
+	 * Returns a TypeError object if the data type is not allowed, otherwise returns `null`
+	 * @param {Object} params allows to add a custom `message` and `cause` to an error
+	 * @returns {Null | Object}
+	 */
+	ExceptionHandler.prototype.catchIt = function(params){
+		// if the data type doesn't cause an exception return `null`
+		if(!this.isError) return null;
+
+		// Validate parameters of the `catchIt()` method
+		if(params) validateThrowAndCatchParams(params, this);
+
+		// (#) Read note at the bottom of file
+		// Define the error message based on user input, if none, use the default message
+		let errorMessage = params && type(params.message).isIt(["function", "string"]) ? params.message : this.defaultErrorMessage;
+
+		// Create the TypeError object
+		let typeError = new TypeError(type(errorMessage).isIt("function") ? errorMessage(this.isType, this.verifyType) : errorMessage);
+
+		// Set a cause if defined
+		if(params && params.cause) typeError.cause = params.cause;
+
+		return typeError;
+	};
+
+	/**
+	 * This will validate the parameters passed through the `.throwIt()` and `.catchIt()` methods
+	 * @param {Object} params  parameter passed through the `.throwIt()` and `.catchIt()` methods
+	 * @param {Object} inst an instance of `this` from the constructor of `ExceptionHandler`
+	 */
+	function validateThrowAndCatchParams(params, inst){
+		// check if the parameters is defined and if it is an object
+		if(params && type(params).isNot("object")) throw TypeError("The `params` argument should be a plain object.");
+
+		// Check if `params.message` is defined and is it a function or a string
+		if(params && params.message && type(params.message).isNot(["function", "string"])) throw TypeError("In `params.message` is expected to be a function or a string.");
+		
+		// Check if `params.message` is it a function and returns a string
+		if(params && params.message && type(params.message).isIt("function") && type(params.message(inst.isType, inst.verifyType)).isNot("string")) throw TypeError("In `params.message()` is expected to return a string");
+	}
+
+	// Highlight error message in red for runtime in terminal
+	const isRuntime = (()=>{try{if(global) return true;}catch{return false}})();
+	const redHighlight = {
+		beginCode: isRuntime ? "\x1b[31m" : "",
+		resetCode: isRuntime ? "\x1b[0m" : ""
+	};
+
+	/**
+	 * 
+	 * @param {*} data The data to be verifies
+	 * @returns {Object} An instance of the constructor `TypeErrorIf`
+	 */
+	const typeErrorIf = function(data){
+
+	    // The constructor
+	    function TypeErrorIf(data){
+	        // Creates an instance of the `Type` constructor
+			this.type = type(data);
+		}
+
+	    /**
+		 * Allows you to verify types of data to further handle exceptions
+		 * @param {String | String[]} verifyType the type or types to be verified
+		 * @returns {Object} an instance of the `ExceptionHandler` constructor
+		 */
+		TypeErrorIf.prototype.isIt = function(verifyType){
+	        // Check that `verifyType` is a string or an array
+			if (type(verifyType).isNot(["string", "array"])) throw TypeError('isIt(verifyType) method, the `verifyType` argument should be a string or an array')
+
+	        // The default error message for the method `isIt()`
+			let defaultErrorMessage = function(errorCauseType, verifyType){
+				let isMultiVerification = Array.isArray(verifyType) && verifyType.length > 1;
+				return redHighlight.beginCode + "Unexpected type: " + errorCauseType + (isMultiVerification ? ("; The following types are not allowed: " + verifyType.toString()) + redHighlight.resetCode : "; That type is not allowed" + redHighlight.resetCode);
+			};
+			
+	        // This will create an instance to the methods .throwIt() and .catchIt() with all necessary data
+			return new ExceptionHandler({
+				isError: this.type.isIt(verifyType), // This will define if an exception occurs
+				isType: this.type.is, // The type of data that was verified that could cause the exception
+				verifyType: verifyType, // The types that were verified through the .isIt() method
+				defaultErrorMessage: defaultErrorMessage // The default Error message in case the user doesn't provide one
+			});
+		};
+
+	    /**
+		 * Allows you to verify types of data to further handle exceptions
+		 * @param {String | String[]} verifyType the type or types to be verified
+		 * @returns {Object} an instance of the `ExceptionHandler` constructor
+		 */
+		TypeErrorIf.prototype.isNot = function(verifyType){
+	        // Check that `verifyType` is a string or an array
+			if (type(verifyType).isNot(["string", "array"])) throw TypeError('isNot(verifyType) method, the `verifyType` argument should be a string or an array')
+			
+	        // The default error message for the method `isNot()`
+			let defaultErrorMessage = function(errorCauseType, verifyType){
+				let isMultiVerification = Array.isArray(verifyType) && verifyType.length > 1;
+				return redHighlight.beginCode + "Unexpected type: " + errorCauseType + "; The only allowed type" + (isMultiVerification ? "s are: " : " is: ") + verifyType.toString() + redHighlight.resetCode;
+			};
+			
+	        // This will create an instance to the methods .throwIt() and .catchIt() with all necessary data
+			return new ExceptionHandler({
+				isError: this.type.isNot(verifyType), // This will define if an exception occurs
+				isType: this.type.is, // The type of data that was verified that could cause the exception
+				verifyType: verifyType, // The types that were verified through the .isNot() method
+				defaultErrorMessage: defaultErrorMessage // The default Error message in case the user doesn't provide one
+			});
+		};
+			
+		// Create an instance
+		return new TypeErrorIf(data);
+	};
+
+	// Add to `window` if possible 
+	(function addToWindowScope(){
+		try{
+			window.type = type;
+			window.typeErrorIf = typeErrorIf;
+		} catch{}
+	})();
+
+	exports.type = type;
+	exports.typeErrorIf = typeErrorIf;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+	return exports;
+
+})({});

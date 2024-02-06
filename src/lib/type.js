@@ -1,17 +1,10 @@
-/*
-** typelib-js | Version 0.8.1
-** A library that helps you to verify different types and kinds of data.
-** © Rodrigo Calix | License: MIT
-*/
-'use strict';
-
 /**
  * Returns a constructor with a set of properties and methods to verify the data
  * @param {*} data The data that will be verified to obtain it's type and kinds
  * @param {Object} customParams parameters to change the default behavior
  * @returns {Object} An instance of the constructor `Type`
  */
-const type = function type(data, customParams) {
+const type = function (data, customParams) {
 	// The constructor
 	var Type = function (data, customParams) {
 
@@ -26,10 +19,13 @@ const type = function type(data, customParams) {
 				if (params === undefined) return false;
 
 				// Check if the parameters are a plain object.
-				if (Object.prototype.toString.call(params) != '[object Object]') throw TypeError('The `params` argument must be an object.');
+				if (Object.prototype.toString.call(params) != '[object Object]') throw TypeError('The `params` argument must be a plain object');
 
 				// Check if the `writable` parameter was defined but also a boolean.
-				if (params.writable !== undefined && (params.writable !== true && params.writable !== false)) throw TypeError('The parameter `writable` must be a boolean.');
+				if (params.writable !== undefined && (params.writable !== true && params.writable !== false)) throw TypeError('The parameter `writable` must be a boolean');
+				
+				// Check if the `throwError` parameter was defined but also a boolean.
+				if (params.throwError !== undefined && (params.throwError !== true && params.throwError !== false)) throw TypeError('The parameter `throwError` must be a boolean');
 
 				return true;
 			}
@@ -44,13 +40,17 @@ const type = function type(data, customParams) {
 			function getParams() {
 				// default parameters with limited options
 				var defaultParams = Object.seal({
-					writable: false
+					writable: false,
+					throwError: false
 				});
 
 				// If the custom parameters are not available return the default parameters, otherwise assign them to `defaultParams`. 
 				return !areCustomParamsAvailable ? defaultParams : Object.assign(defaultParams, customParams);
 			}
 		)();
+
+		// Store the parameters
+		this.params = !params.writable ? Object.freeze(params) : params;
 
 		// This method returns a more specific type than the native `typeof` operator.
 		// src: https://vanillajstoolkit.com/helpers/truetypeof/
@@ -76,10 +76,6 @@ const type = function type(data, customParams) {
 				// If it's a class.
 				if (defaultType == "function" && data.toString().indexOf('class') === 0) return "class";
 				
-				// If it's an arrow function.
-				// AI help: https://www.perplexity.ai/search/How-can-you-icR0PHxbRZmITiFRmKjjuQ?s=c
-				if (defaultType == "function" && !data.prototype && data.toString().indexOf('function') !== 0) return "arrowfunction";
-
 				// If it's NaN, Infinity or -Infinity.
 				var numberTypes = ["NaN", 'Infinity', '-Infinity'];
 				if (defaultType == "number" && numberTypes.indexOf(data.toString()) > -1) return data.toString().toLowerCase();
@@ -160,37 +156,38 @@ const type = function type(data, customParams) {
 	};
 
 	/**
-	 * Allows you to verify expected types of data
-	 * @param {String | String[]} expectedType the type or types you are expecting 
+	 * Allows you to verify types of data
+	 * @param {String | String[]} verifyType the type or types to be verified
 	 * @returns {Boolean}
 	 */
-	Type.prototype.isIt = function (expectedType) {
-		// If `expectedType` is not a string or an array throw a TypeError. 
-		if (typeof expectedType !== 'string' && !Array.isArray(expectedType)) throw TypeError('isIt(expectedType) method, the `expectedType` argument should be a string or an array.')
+	Type.prototype.isIt = function (verifyType) {
+		// If `verifyType` is not a string or an array throw a TypeError. 
+		if (typeof verifyType !== 'string' && !Array.isArray(verifyType)) throw TypeError('isIt(verifyType) method, the `verifyType` argument should be a string or an array')
 
-		// If `expectedType` is an array check if there is a matching item
-		if (Array.isArray(expectedType)) return expectedType.indexOf(this.is) > -1
+		// If `verifyType` is an array check if there is a matching item
+		if (Array.isArray(verifyType)) return verifyType.indexOf(this.is) > -1
 
-		// If `expectedType` is a string
-		return expectedType === this.is;
+		// If `verifyType` is a string
+		return verifyType === this.is;
 	};
 
 
 	/**
-	 * Allows you to verify not expected types of data
-	 * @param {String | String[]} notExpectedType the type or types you are not expecting 
+	 * Allows you to verify types of data
+	 * @param {String | String[]} verifyType the type or types to be verified
 	 * @returns {Boolean}
 	 */
-	Type.prototype.isNot = function (notExpectedType) {
-		// If `notExpectedType` is not a string or an array throw a TypeError.
-		if (typeof notExpectedType !== 'string' && !Array.isArray(notExpectedType)) throw TypeError('isNot(notExpectedType) method, the `notExpectedType` argument should be a string or an array.');
+	Type.prototype.isNot = function (verifyType) {
+		// If `verifyType` is not a string or an array throw a TypeError.
+		if (typeof verifyType !== 'string' && !Array.isArray(verifyType)) throw TypeError('isNot(verifyType) method, the `verifyType` argument should be a string or an array');
 
 		// Return the opposite of the `isIt()` method
-		return !this.isIt(notExpectedType);
+		return !this.isIt(verifyType);
+		
 	};
 
 	// Create an instance to the `Type` constructor
 	return new Type(data, customParams);
 };
 
-module.exports = type;
+export {type};

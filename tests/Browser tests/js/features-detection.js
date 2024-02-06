@@ -10,17 +10,10 @@
  */
 function isEnvironmentCompatible(){
     try{
-        // Function Types
-        const classCheck = class Hello{};
-        const arrowFunctionCheck = ()=>"hello";
-        const generatorFunctionCheck = function* (){ };
         
         // Constructors
-        const setCheck = new Set();
-        const weakMapCheck = new WeakMap();
-        const weakSetCheck = new WeakSet();
-        const mapCheck = new Map();
-        const arrayBufferCheck = new ArrayBuffer();
+        const blob = new Blob();
+        const fileReader = new FileReader();
 
         // After all the tests are passed
         return true;

@@ -18,14 +18,14 @@ export default {
         {
             file: 'dist/typelib.js',
             format: 'iife',
-            name: 'type',
+            name: "typelib",
             banner: headerLong,
         },
         // IIFE Min
         {
             file: 'dist/typelib.min.js',
             format: 'iife',
-            name: 'type',
+            name: "typelib",
             plugins: [
                 minify(),
                 banner(headerShort)
@@ -33,35 +33,15 @@ export default {
         },
         // Common JS
         {
-            file: 'dist/typelib.cjs.js',
+            file: 'dist/typelib.cjs',
             format: 'cjs',
-            exports: 'default',
             banner: headerLong
-        },
-        // CJS Min
-        {
-            file: 'dist/typelib.cjs.min.js',
-            format: 'cjs',
-            exports: 'default',
-            plugins: [
-                minify(),
-                banner(headerShort)
-            ]
         },
         // EcmaScript Module
         {
-            file: 'dist/typelib.es.js',
+            file: 'dist/typelib.mjs',
             format: 'es',
             banner: headerLong
-        },
-        // ESM Min
-        {
-            file: 'dist/typelib.es.min.js',
-            format: 'es',
-            plugins: [
-                minify(),
-                banner(headerShort)
-            ]
         }
     ]
 };

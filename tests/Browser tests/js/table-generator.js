@@ -5,10 +5,6 @@
  * @license MIT
 */
 
-// If the script is executed in Node JS
-if (typeof module !== 'undefined' && typeof global !== 'undefined') var type = require('../../dist/typelib.cjs.min.js');
-
-
 // Generate a table row from a test
 const generateRow = {
     /**
